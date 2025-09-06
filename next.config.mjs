@@ -1,4 +1,17 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+import withPlaiceholder from "@plaiceholder/next";
 
-export default nextConfig;
+const nextConfig = {
+    images: {
+      remotePatterns: [
+        {
+          protocol: "https",
+          hostname: "i.ibb.co",
+        },
+      ],
+    },
+  }
+  
+
+export default withPlaiceholder(nextConfig);
+  
