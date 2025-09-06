@@ -12,6 +12,7 @@ export default function ProductsPage() {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/products`)
         const data = await res.json()
+        console.log(data)
         if (data.success) setProducts(data.products)
       } catch (err) {
         console.error("Error fetching products:", err)
@@ -22,29 +23,6 @@ export default function ProductsPage() {
     fetchProducts()
   }, [])
 
-  useEffect(() => {
-    if (products.length === 0) return;
-  
-    async function addBase64ToProducts() {
-      try {
-        const updated = await Promise.all(
-          products.map(async (product) => {
-            const res = await fetch(`/api/base64?url=${encodeURIComponent(product.image)}`);
-            const data = await res.json();
-            return data.success 
-              ? { ...product, baseUrl: data.base64 }
-              : product;
-          })
-        );
-  
-        setProducts(updated);
-      } catch (err) {
-        console.error("Error while adding base64:", err);
-      }
-    }
-  
-    addBase64ToProducts();
-  }, [products.length]); // <- dependency: sirf length change hone pe run hoga
   
 
   if (loading) {
@@ -57,11 +35,11 @@ export default function ProductsPage() {
         <div key={product._id} className="border rounded-xl p-4 shadow-md">
           <div className="relative w-full h-40">
             <Image
-              src={product.image}
+              src={product.imageUrl}
               alt={product.name}
               fill
               placeholder="blur"
-              blurDataURL={product?.baseUrl || "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAACCAIAAADwyuo0AAAACXBIWXMAABYlAAAWJQFJUiTwAAAAI0lEQVR4nGN48v//ms271Y1MGLi4GQ4+eFnbNSG+oLhp/iIArlYMxSGc5ukAAAAASUVORK5CYII="}
+              blurDataURL={product.base64Url}
               className="object-cover rounded-md"
               loading="lazy"
             />
