@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@plaiceholder/next": "^3.0.0",
-    "bcryptjs": "^3.0.2",
     "lucide-react": "^0.542.0",
     "next": "15.5.2",
     "plaiceholder": "^3.0.0",

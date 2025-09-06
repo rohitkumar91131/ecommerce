@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from "react"
 import Image from "next/image"
+import ProductSkeleton from "../Ui/ProductSkeleteon"
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([])
@@ -21,19 +22,33 @@ export default function ProductsPage() {
     fetchProducts()
   }, [])
 
+  useEffect(() => {
+    if (products.length === 0) return;
+  
+    async function addBase64ToProducts() {
+      try {
+        const updated = await Promise.all(
+          products.map(async (product) => {
+            const res = await fetch(`/api/base64?url=${encodeURIComponent(product.image)}`);
+            const data = await res.json();
+            return data.success 
+              ? { ...product, baseUrl: data.base64 }
+              : product;
+          })
+        );
+  
+        setProducts(updated);
+      } catch (err) {
+        console.error("Error while adding base64:", err);
+      }
+    }
+  
+    addBase64ToProducts();
+  }, [products.length]); // <- dependency: sirf length change hone pe run hoga
+  
+
   if (loading) {
-    return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
-        {Array.from({ length: 8 }).map((_, idx) => (
-          <div key={idx} className="border rounded-xl p-4 shadow-md animate-pulse">
-            <div className="bg-gray-300 w-full h-40 rounded-md mb-2" />
-            <div className="h-4 bg-gray-300 rounded w-3/4 mb-1" />
-            <div className="h-4 bg-gray-300 rounded w-1/2 mb-1" />
-            <div className="h-5 bg-gray-300 rounded w-1/4" />
-          </div>
-        ))}
-      </div>
-    )
+    return ( <ProductSkeleton/>)
   }
 
   return (
@@ -45,6 +60,8 @@ export default function ProductsPage() {
               src={product.image}
               alt={product.name}
               fill
+              placeholder="blur"
+              blurDataURL={product?.baseUrl || "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAACCAIAAADwyuo0AAAACXBIWXMAABYlAAAWJQFJUiTwAAAAI0lEQVR4nGN48v//ms271Y1MGLi4GQ4+eFnbNSG+oLhp/iIArlYMxSGc5ukAAAAASUVORK5CYII="}
               className="object-cover rounded-md"
               loading="lazy"
             />
