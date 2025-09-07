@@ -19,17 +19,14 @@ function cartReducer(state, action) {
       return [...state, { ...action.product, count: 1 }];
     }
 
-    case "INCREMENT":
-      return state.map((item) =>
-        item._id === action.id ? { ...item, count: item.count + 1 } : item
-      );
-
-    case "DECREMENT":
-      return state.map((item) =>
-        item._id === action.id
-          ? { ...item, count: Math.max(1, item.count - 1) }
-          : item
-      );
+    case "UPDATE_COUNT":
+      return state
+        .map((item) =>
+          item._id === action.id
+            ? { ...item, count: item.count + action.delta }
+            : item
+        )
+        .filter((item) => item.count > 0);
 
     case "REMOVE":
       return state.filter((item) => item._id !== action.id);

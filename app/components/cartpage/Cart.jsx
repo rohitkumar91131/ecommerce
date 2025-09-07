@@ -40,39 +40,43 @@ export default function Cart() {
                     className="object-cover rounded-md"
                   />
                 </div>
+
                 <div>
                   <p className="font-semibold text-lg">{item.name}</p>
                   <p className="text-sm text-gray-500">{item.category}</p>
                   <p className="text-sm text-gray-700">₹{item.price}</p>
                 </div>
               </div>
-              <div className="w-full flex items-center justify-around">
-              <div className="w-full flex  items-center space-x-2">
-                <button
-                  className="p-2 bg-gray-200 rounded"
-                  onClick={() =>
-                    dispatch({ type: "DECREMENT", id: item._id })
-                  }
-                >
-                  <Minus size={16} />
-                </button>
-                <span className="font-medium">{item.count}</span>
-                <button
-                  className="p-2 bg-gray-200 rounded"
-                  onClick={() =>
-                    dispatch({ type: "INCREMENT", id: item._id })
-                  }
-                >
-                  <Plus size={16} />
-                </button>
-              </div>
 
-              <div className="flex w-full">
-                <p className="font-semibold text-lg text-gray-800">
-                  ₹{item.price * item.count}
-                </p>
+              <div className="w-full flex items-center justify-around">
+                <div className="w-full flex items-center space-x-2">
+                  <button
+                    className="p-2 bg-gray-200 rounded"
+                    onClick={() =>
+                      dispatch({ type: "UPDATE_COUNT", id: item._id, delta: -1 })
+                    }
+                  >
+                    <Minus size={16} />
+                  </button>
+
+                  <span className="font-medium">{item.count}</span>
+
+                  <button
+                    className="p-2 bg-gray-200 rounded"
+                    onClick={() =>
+                      dispatch({ type: "UPDATE_COUNT", id: item._id, delta: 1 })
+                    }
+                  >
+                    <Plus size={16} />
+                  </button>
+                </div>
+
+                <div className="flex w-full">
+                  <p className="font-semibold text-lg text-gray-800">
+                    ₹{item.price * item.count}
+                  </p>
+                </div>
               </div>
-            </div>
             </div>
           ))}
 

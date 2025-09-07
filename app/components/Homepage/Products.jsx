@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import ProductSkeleton from "../Ui/ProductSkeleteon";
 import { useCart } from "@/app/context/CartContext";
+import { useProduct } from "@/app/context/FilterResultContext";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { cartItems, dispatch } = useCart();
+  const {filteredProducts, setFilteredProducts, allProducts , setAllProducts} = useProduct();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -16,7 +18,11 @@ export default function ProductsPage() {
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/products`
         );
         const data = await res.json();
-        if (data.success) setProducts(data.products);
+        if (data.success) {
+          setProducts(data.products);
+          setAllProducts(data.products);
+          setFilteredProducts(data.products)
+        }
       } catch (err) {
         console.error("Error fetching products:", err);
       } finally {
@@ -30,7 +36,7 @@ export default function ProductsPage() {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
-      {products.map((product) => {
+      {filteredProducts.map((product) => {
         const inCart = cartItems.some((item) => item._id === product._id);
         return (
           <div
@@ -56,7 +62,7 @@ export default function ProductsPage() {
             {inCart ? (
               <button
                 disabled
-                className="!p-1 bg-green-500 text-white rounded-md absolute bottom-1 right-1 cursor-not-allowed"
+                className="!p-1 bg-green-500 text-white rounded-md absolute bottom-1 right-1 "
               >
                 ✅ Added
               </button>
