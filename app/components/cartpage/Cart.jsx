@@ -1,11 +1,20 @@
 "use client";
 import { useCart } from "@/app/context/CartContext";
 import Image from "next/image";
+import Link from "next/link";
 import { toast } from "react-hot-toast";
-import { Plus, Minus } from "lucide-react";
+import { Plus, Minus, Home } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function Cart() {
   const { cartItems, dispatch } = useCart();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   const totalPrice = cartItems.reduce(
     (sum, item) => sum + item.price * item.count,
@@ -21,7 +30,13 @@ export default function Cart() {
       <h2 className="text-3xl font-bold mb-6">🛒 Your Cart</h2>
 
       {cartItems.length === 0 ? (
-        <p className="text-gray-500 text-lg">Your cart is empty</p>
+        <div className="flex flex-col items-center space-y-4">
+          <p className="text-gray-500 text-lg">Your cart is empty</p>
+
+          <Link href="/" className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+            <Home className="w-5 h-5 mr-2" /> Go Home
+          </Link>
+        </div>
       ) : (
         <div className="space-y-4">
           {cartItems.map((item) => (
