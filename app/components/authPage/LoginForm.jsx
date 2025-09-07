@@ -10,7 +10,7 @@ export default function LoginForm() {
   const [loginFormData, setLoginFormData] = useState({ username: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const { setLoginPageInTheWondow, setIsLoggedIn } = useAuth();
+  const { setLoginPageInTheWondow } = useAuth();
   const router = useRouter();
 
   const handleChange = (e) => {
@@ -26,16 +26,13 @@ export default function LoginForm() {
       return;
     }
 
-    setIsLoggingIn(true);
     const data = await loginUser({ username, password });
 
     if (!data.success) {
       toast.error(data.message);
-      setIsLoggingIn(false);
       return;
     }
 
-    setIsLoggedIn(true);
     toast.success("Login successful");
     router.push("/");
   };

@@ -14,7 +14,7 @@ export default function SignupForm() {
     password: ""
   })
   const [showPassword, setShowPassword] = useState(false)
-  const { setLoginPageInTheWondow, setIsLoggedIn } = useAuth()
+  const { setLoginPageInTheWondow } = useAuth()
   const router = useRouter()
 
   const handleChange = (e) => {
@@ -37,8 +37,6 @@ export default function SignupForm() {
       toast.error(data.message || "Signup failed")
       return
     }
-
-    setIsLoggedIn(true)
     toast.success("Signup successful")
     router.push("/")
   }
