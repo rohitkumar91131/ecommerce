@@ -48,7 +48,7 @@ export default function Header() {
   }, [searchFormData]);
 
   return (
-    <header className="w-full bg-white shadow-md px-4 py-3 grid grid-cols-[auto_1fr_auto] md:grid-cols-[1fr_2fr_1fr] gap-2 items-center">
+    <header className="relative w-full bg-white shadow-md px-4 py-3 grid grid-cols-[auto_1fr_auto] md:grid-cols-[1fr_2fr_1fr] gap-2 items-center">
       <div className="flex gap-2 items-center justify-start">
         <Image
           src="/logo.svg"
@@ -182,44 +182,6 @@ export default function Header() {
             </div>
           </div>
         </form>
-
-        <div className={`md:hidden mt-2 ${mobileMenuOpen ? "block" : "hidden"}`}>
-          <nav className="bg-white shadow-md rounded-md overflow-hidden">
-            <Link
-              href="/"
-              className="block px-4 py-3 hover:bg-gray-100 flex items-center gap-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <Home size={20} /> Home
-            </Link>
-            <Link
-              href="/cart"
-              className="block px-4 py-3 hover:bg-gray-100 flex items-center gap-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <ShoppingCart size={20} /> Cart
-            </Link>
-            {!isLoggedIn ? (
-              <Link
-                href="/auth"
-                className="block px-4 py-3 hover:bg-gray-100 flex items-center gap-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <UserPlus size={20} /> Signup/login
-              </Link>
-            ) : (
-              <button
-                onClick={async () => {
-                  await handleLogout(setIsLoggedIn, router, toast);
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full text-left px-4 py-3 hover:bg-gray-100 flex items-center gap-2 text-red-600"
-              >
-                <LogOut size={20} /> Logout
-              </button>
-            )}
-          </nav>
-        </div>
       </div>
 
       <nav className="hidden md:flex items-center gap-5 text-gray-600 justify-end">
@@ -249,6 +211,44 @@ export default function Header() {
           </button>
         )}
       </nav>
+
+      {mobileMenuOpen && (
+        <div className="absolute top-full left-0 w-full bg-white shadow-md flex flex-col sm:hidden z-50">
+          <Link
+            href="/"
+            className="px-4 py-3 hover:bg-gray-100 flex items-center gap-2"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <Home size={20} /> Home
+          </Link>
+          <Link
+            href="/cart"
+            className="px-4 py-3 hover:bg-gray-100 flex items-center gap-2"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <ShoppingCart size={20} /> Cart
+          </Link>
+          {!isLoggedIn ? (
+            <Link
+              href="/auth"
+              className="px-4 py-3 hover:bg-gray-100 flex items-center gap-2"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <UserPlus size={20} /> Signup/login
+            </Link>
+          ) : (
+            <button
+              onClick={async () => {
+                await handleLogout(setIsLoggedIn, router, toast);
+                setMobileMenuOpen(false);
+              }}
+              className="w-full text-left px-4 py-3 hover:bg-gray-100 flex items-center gap-2 text-red-600"
+            >
+              <LogOut size={20} /> Logout
+            </button>
+          )}
+        </div>
+      )}
     </header>
   );
 }

@@ -44,7 +44,7 @@ export default function SignupForm() {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50">
+    <div className="flex justify-center items-center h-[85dvh] bg-gray-50">
       <div className="bg-white shadow-2xl rounded-2xl p-8 w-96">
         <h1 className="text-4xl font-extrabold text-green-600 text-center">
           Astrape.AI

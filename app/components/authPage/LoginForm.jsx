@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useAuth } from "@/app/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { loginUser } from "@/lib/login";
@@ -41,7 +41,7 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50">
+    <div className="flex justify-center items-center h-[85dvh] bg-gray-50">
       <div className="bg-white shadow-2xl rounded-2xl p-8 w-96">
         <h1 className="text-4xl font-extrabold text-indigo-600 text-center">
           Astrape.AI
@@ -49,6 +49,13 @@ export default function LoginForm() {
         <p className="text-gray-500 text-center mb-6">
           Welcome back! Please login to continue
         </p>
+
+        <div className="flex items-start gap-2 bg-yellow-100 border-l-4 border-yellow-400 text-yellow-800 p-3 rounded mb-4">
+          <AlertCircle size={20} className="mt-0.5"/>
+          <p className="text-sm">
+            To use our app fully, please ensure third-party cookies are enabled in your browser.
+          </p>
+        </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input

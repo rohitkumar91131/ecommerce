@@ -1,11 +1,10 @@
-
 import { Toaster } from "react-hot-toast";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "./context/AuthContext";
-import Header from "./components/Ui/Header";
 import { CartProvider } from "./context/CartContext";
 import { ProductsProvider } from "./context/FilterResultContext";
+import AppWrapper from "./wrapper/AppWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,14 +28,12 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-        <CartProvider>
-        <ProductsProvider>
-        <Toaster position="top-right" toastOptions={{ duration: 1500 }}/>
-
-        <Header/>
-        {children}
-        </ProductsProvider>
-        </CartProvider>
+          <CartProvider>
+            <ProductsProvider>
+              <Toaster position="top-right" toastOptions={{ duration: 1500 }} />
+              <AppWrapper>{children}</AppWrapper>
+            </ProductsProvider>
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>

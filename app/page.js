@@ -1,34 +1,42 @@
-'use client'
-import React, { useEffect } from 'react'
-import ProductsPage from './components/Homepage/Products'
-import toast from 'react-hot-toast';
-import { useAuth } from './context/AuthContext';
-import { verifyAuth } from '@/lib/checkAuth';
-
+"use client";
+import React, { useEffect, useRef } from "react";
+import ProductsPage from "./components/Homepage/Products";
+import toast from "react-hot-toast";
+import { useAuth } from "./context/AuthContext";
+import { verifyAuth } from "@/lib/checkAuth";
 
 function HomePage() {
-  const { setIsLoggedIn, isLoggedIn } = useAuth();
+  const { setIsLoggedIn, isLoggedIn ,greetedRef} = useAuth();
+
 
   useEffect(() => {
     const checkAuth = async () => {
       const data = await verifyAuth();
 
       if (data.success) {
-        setIsLoggedIn(true);
-        toast.success(`Welcome back ${data.user.name}`);
+        if (!isLoggedIn) {
+          setIsLoggedIn(true);
+        }
+        if (!greetedRef.current) {
+          toast.success(`Welcome back ${data.user.name}`);
+          greetedRef.current = true;
+        }
       } else {
-        toast.error("Unauthenticated");
+        if (!greetedRef.current) {
+          toast.error("Unauthenticated");
+          greetedRef.current = true;
+        }
       }
     };
 
     checkAuth();
-  }, [isLoggedIn]);
+  }, [isLoggedIn, setIsLoggedIn]);
 
   return (
     <div>
       <ProductsPage />
     </div>
-  )
+  );
 }
 
 export default HomePage;
