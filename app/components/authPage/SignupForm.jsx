@@ -6,7 +6,6 @@ import { useAuth } from "@/app/context/AuthContext"
 import { useRouter } from "next/navigation"
 import { signup } from "@/lib/signup"
 
-
 export default function SignupForm() {
   const [signupFormData, setSignupFormData] = useState({
     name: "",
@@ -14,6 +13,7 @@ export default function SignupForm() {
     password: ""
   })
   const [showPassword, setShowPassword] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const { setLoginPageInTheWondow } = useAuth()
   const router = useRouter()
 
@@ -24,32 +24,33 @@ export default function SignupForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (isSubmitting) return
     const { name, username, password } = signupFormData
-
     if (!name || !username || !password) {
       toast.error("All fields are required")
       return
     }
-
-    const data = await signup({ name, username, password })
-
-    if (!data.success) {
-      toast.error(data.message || "Signup failed")
-      return
+    setIsSubmitting(true)
+    try {
+      const data = await signup({ name, username, password })
+      if (!data.success) {
+        toast.error(data.message || "Signup failed")
+        return
+      }
+      toast.success("Signup successful")
+      router.push("/")
+    } catch (err) {
+      toast.error("Something went wrong")
+    } finally {
+      setIsSubmitting(false)
     }
-    toast.success("Signup successful")
-    router.push("/")
   }
 
   return (
     <div className="flex justify-center items-center h-[85dvh] bg-gray-50">
       <div className="bg-white shadow-2xl rounded-2xl p-8 w-96">
-        <h1 className="text-4xl font-extrabold text-green-600 text-center">
-          Astrape.AI
-        </h1>
-        <p className="text-gray-500 text-center mb-6">
-          Create your account and start shopping smarter
-        </p>
+        <h1 className="text-4xl font-extrabold text-green-600 text-center">Astrape.AI</h1>
+        <p className="text-gray-500 text-center mb-6">Create your account and start shopping smarter</p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
@@ -59,7 +60,8 @@ export default function SignupForm() {
             value={signupFormData.name}
             onChange={handleChange}
             required
-            className="border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400"
+            disabled={isSubmitting}
+            className="border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <input
             type="text"
@@ -68,7 +70,8 @@ export default function SignupForm() {
             value={signupFormData.username}
             onChange={handleChange}
             required
-            className="border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400"
+            disabled={isSubmitting}
+            className="border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 disabled:opacity-50 disabled:cursor-not-allowed"
           />
 
           <div className="relative">
@@ -79,12 +82,14 @@ export default function SignupForm() {
               value={signupFormData.password}
               onChange={handleChange}
               required
-              className="border rounded-lg px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-green-400"
+              disabled={isSubmitting}
+              className="border rounded-lg px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-green-400 disabled:opacity-50 disabled:cursor-not-allowed"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-3 text-gray-500 hover:text-gray-700"
+              disabled={isSubmitting}
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
@@ -92,9 +97,11 @@ export default function SignupForm() {
 
           <button
             type="submit"
-            className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition duration-300"
+            disabled={isSubmitting}
+            aria-busy={isSubmitting}
+            className={`text-white font-semibold py-3 rounded-lg transition duration-300 ${isSubmitting ? "bg-green-400 cursor-not-allowed opacity-80" : "bg-green-600 hover:bg-green-700"}`}
           >
-            Signup
+            {isSubmitting ? "Signing up..." : "Signup"}
           </button>
         </form>
 
@@ -103,6 +110,7 @@ export default function SignupForm() {
           <button
             onClick={() => setLoginPageInTheWondow(true)}
             className="text-green-600 hover:underline"
+            disabled={isSubmitting}
           >
             Login
           </button>

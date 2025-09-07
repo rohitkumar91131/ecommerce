@@ -19,22 +19,26 @@ export default function LoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isLoggingIn) return;
     const { username, password } = loginFormData;
-
     if (!username || !password) {
       toast.error("All fields are required");
       return;
     }
-
-    const data = await loginUser({ username, password });
-
-    if (!data.success) {
-      toast.error(data.message);
-      return;
+    setIsLoggingIn(true);
+    try {
+      const data = await loginUser({ username, password });
+      if (!data.success) {
+        toast.error(data.message || "Login failed");
+        return;
+      }
+      toast.success("Login successful");
+      router.push("/");
+    } catch (err) {
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoggingIn(false);
     }
-
-    toast.success("Login successful");
-    router.push("/");
   };
 
   return (
@@ -62,7 +66,8 @@ export default function LoginForm() {
             value={loginFormData.username}
             onChange={handleChange}
             required
-            className="border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            disabled={isLoggingIn}
+            className="border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed"
           />
 
           <div className="relative">
@@ -73,12 +78,14 @@ export default function LoginForm() {
               value={loginFormData.password}
               onChange={handleChange}
               required
-              className="border rounded-lg px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              disabled={isLoggingIn}
+              className="border rounded-lg px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-3 text-gray-500 hover:text-gray-700"
+              disabled={isLoggingIn}
+              className="absolute right-3 top-3 text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
@@ -87,9 +94,8 @@ export default function LoginForm() {
           <button
             type="submit"
             disabled={isLoggingIn}
-            className={`bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition duration-300 ${
-              isLoggingIn ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            aria-busy={isLoggingIn}
+            className={`text-white font-semibold py-3 rounded-lg transition duration-300 ${isLoggingIn ? "bg-indigo-400 cursor-not-allowed opacity-80" : "bg-indigo-600 hover:bg-indigo-700"}`}
           >
             {isLoggingIn ? "Logging in..." : "Login"}
           </button>
@@ -97,7 +103,11 @@ export default function LoginForm() {
 
         <p className="text-center text-sm text-gray-500 mt-6">
           Don’t have an account?{" "}
-          <button onClick={() => setLoginPageInTheWondow(false)} className="text-indigo-600 hover:underline">
+          <button
+            onClick={() => setLoginPageInTheWondow(false)}
+            className="text-indigo-600 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isLoggingIn}
+          >
             Sign up
           </button>
         </p>
