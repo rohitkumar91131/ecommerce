@@ -4,6 +4,8 @@ import { toast } from "react-hot-toast"
 import { Eye, EyeOff } from "lucide-react"
 import { useAuth } from "@/app/context/AuthContext"
 import { useRouter } from "next/navigation"
+import { signup } from "@/lib/signup"
+
 
 export default function SignupForm() {
   const [signupFormData, setSignupFormData] = useState({
@@ -12,7 +14,7 @@ export default function SignupForm() {
     password: ""
   })
   const [showPassword, setShowPassword] = useState(false)
-  const { setLoginPageInTheWondow ,setIsLoggedIn} = useAuth()
+  const { setLoginPageInTheWondow, setIsLoggedIn } = useAuth()
   const router = useRouter()
 
   const handleChange = (e) => {
@@ -29,28 +31,16 @@ export default function SignupForm() {
       return
     }
 
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include",
-        body: JSON.stringify(signupFormData)
-      })
-      const data = await res.json()
+    const data = await signup({ name, username, password })
 
-      if (!data.success) {
-        toast.error(data.message || "Signup failed")
-        return
-      }
-      setIsLoggedIn(true)
-      toast.success("Signup successful");
-      router.push("/")
-    } catch (err) {
-      console.error(err)
-      toast.error("Something went wrong")
+    if (!data.success) {
+      toast.error(data.message || "Signup failed")
+      return
     }
+
+    setIsLoggedIn(true)
+    toast.success("Signup successful")
+    router.push("/")
   }
 
   return (

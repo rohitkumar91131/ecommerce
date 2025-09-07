@@ -222,7 +222,6 @@ export default function Header() {
         </div>
       </div>
 
-      {/* desktop nav (hidden on small screens) */}
       <nav className="hidden md:flex items-center gap-5 text-gray-600 justify-end">
         <Link href="/" className="flex items-center gap-1 hover:text-indigo-600">
           <Home size={24} /> <span>Home</span>

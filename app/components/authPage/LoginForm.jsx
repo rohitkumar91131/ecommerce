@@ -1,57 +1,44 @@
-"use client"
-import React, { useState } from "react"
-import { toast } from "react-hot-toast"
-import { Eye, EyeOff } from "lucide-react"
-import { useAuth } from "@/app/context/AuthContext"
-import { useRouter } from "next/navigation"
+"use client";
+import React, { useState } from "react";
+import { toast } from "react-hot-toast";
+import { Eye, EyeOff } from "lucide-react";
+import { useAuth } from "@/app/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { loginUser } from "@/lib/login";
 
 export default function LoginForm() {
-  const [loginFormData, setLoginFormData] = useState({ username: "", password: "" })
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoggingIn, setIsLoggingIn] = useState(false)
-  const { setLoginPageInTheWondow ,setIsLoggedIn} = useAuth()
-  const router = useRouter()
+  const [loginFormData, setLoginFormData] = useState({ username: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const { setLoginPageInTheWondow, setIsLoggedIn } = useAuth();
+  const router = useRouter();
 
   const handleChange = (e) => {
-    setLoginFormData({ ...loginFormData, [e.target.name]: e.target.value })
-  }
+    setLoginFormData({ ...loginFormData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    const { username, password } = loginFormData
+    e.preventDefault();
+    const { username, password } = loginFormData;
 
     if (!username || !password) {
-      toast.error("All fields are required")
-      return
+      toast.error("All fields are required");
+      return;
     }
 
-    setIsLoggingIn(true)
+    setIsLoggingIn(true);
+    const data = await loginUser({ username, password });
 
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-        credentials: "include",
-      })
-
-      const data = await res.json()
-
-      if (!data.success) {
-        toast.error(data.message)
-        setIsLoggingIn(false)
-        return
-      }
-      setIsLoggedIn(true)
-      toast.success("Login successful");
-      router.push("/")
-    } catch (error) {
-      toast.error("Something went wrong")
-      setIsLoggingIn(false)
+    if (!data.success) {
+      toast.error(data.message);
+      setIsLoggingIn(false);
+      return;
     }
-  }
+
+    setIsLoggedIn(true);
+    toast.success("Login successful");
+    router.push("/");
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-50">
@@ -112,5 +99,5 @@ export default function LoginForm() {
         </p>
       </div>
     </div>
-  )
+  );
 }

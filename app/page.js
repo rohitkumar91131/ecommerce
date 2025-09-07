@@ -3,35 +3,32 @@ import React, { useEffect } from 'react'
 import ProductsPage from './components/Homepage/Products'
 import toast from 'react-hot-toast';
 import { useAuth } from './context/AuthContext';
+import { verifyAuth } from '@/lib/checkAuth';
+
 
 function HomePage() {
-  const {setIsLoggedIn} = useAuth();
-  useEffect(()=>{
+  const { setIsLoggedIn, isLoggedIn } = useAuth();
+
+  useEffect(() => {
     const checkAuth = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/verify`, {
-          method: "GET",
-          credentials: "include"
-        });
-        const data = await res.json();
-        if (data.success) {
-          setIsLoggedIn(true)
-          toast.success(`Welcome back ${data.user.name}`)
-        } else {
-          toast.error("Unauthenticated")
-        }
-      } catch (err) {
-        toast.error(err.message)
+      const data = await verifyAuth();
+
+      if (data.success) {
+        setIsLoggedIn(true);
+        toast.success(`Welcome back ${data.user.name}`);
+      } else {
+        toast.error("Unauthenticated");
       }
     };
-    checkAuth();  
-    
-  },[])
+
+    checkAuth();
+  }, [isLoggedIn]);
+
   return (
     <div>
-      <ProductsPage/>
+      <ProductsPage />
     </div>
   )
 }
 
-export default HomePage
+export default HomePage;
